@@ -393,7 +393,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--batch_size', default=256, type=int)
-    parser.add_argument('--img_size', default=28, type=int) 
+    parser.add_argument('--img_size', default=224, type=int) 
     
     parser.add_argument('--num_workers', default=8, type=int)
     parser.add_argument('--eval_funcs', type=list, default=['v2'])
@@ -422,7 +422,7 @@ if __name__ == "__main__":
     parser.add_argument('--alpha', default=0.8, type=float)
     parser.add_argument('--beta', default=0.5, type=float)
     parser.add_argument('--tro', default=0.5, type=float)
-    parser.add_argument('--stop_epoch', default=200, type=int)
+    parser.add_argument('--stop_epoch', default=500, type=int)
     parser.add_argument("--temperature", default=0.1, type=float, help="softmax temperature")
     parser.add_argument('--backbone', type=str, default='resnet18')
     # ----------------------
