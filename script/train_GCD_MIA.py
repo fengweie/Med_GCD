@@ -15,7 +15,7 @@ import math
 from general_utils import AverageMeter, init_experiment
 from cluster_and_log_utils import log_accs_from_preds
 import torch.backends.cudnn as cudnn
-from loss import info_nce_logits, SupConLoss, DistillLoss, ContrastiveLearningViewGenerator, get_params_groups
+from loss import info_nce_logits, SupConLoss, DistillLoss, ContrastiveLearningViewGenerator, get_params_groups, info_nce_logits_with_pseudo_labels
 from copy import deepcopy
 from sklearn.cluster import KMeans
 from load_data.get_datasets import get_datasets, get_class_splits
@@ -213,7 +213,7 @@ def train_dual(student_ce, train_loader, test_loader, args):
             cluster_loss += args.memax_weight * me_max_loss
 
             # represent learning, unsup
-            contrastive_logits, contrastive_labels = info_nce_logits(features=student_proj)
+            contrastive_logits, contrastive_labels = info_nce_logits_with_pseudo_labels(features=student_proj,pseudo_labels=teacher_out)
             contrastive_loss = torch.nn.CrossEntropyLoss()(contrastive_logits, contrastive_labels)
 
             # representation learning, sup
@@ -392,8 +392,8 @@ class Resnet_model(nn.Module):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--batch_size', default=512, type=int)
-    parser.add_argument('--img_size', default=256, type=int) 
+    parser.add_argument('--batch_size', default=256, type=int)
+    parser.add_argument('--img_size', default=28, type=int) 
     
     parser.add_argument('--num_workers', default=8, type=int)
     parser.add_argument('--eval_funcs', type=list, default=['v2'])
