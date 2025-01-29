@@ -223,6 +223,41 @@ def info_nce_logits(features, n_views=2, temperature=1.0, device='cuda'):
     return logits, labels
 
 
+def info_nce_logits_with_pseudo_labels(features, pseudo_labels, n_views=2, temperature=1.0, device='cuda'):
+
+    pseudo_labels_sim = F.normalize(pseudo_labels, dim=1)
+    pseudo_labels = torch.matmul(pseudo_labels_sim, pseudo_labels_sim.T)
+    pseudo_labels = (pseudo_labels + 1) / 2
+    
+    b_ = 0.5 * int(features.size(0))
+
+    labels = torch.cat([torch.arange(b_) for _ in range(n_views)], dim=0)
+    labels = (labels.unsqueeze(0) == labels.unsqueeze(1)).float()
+    labels = labels.to(device)
+
+    features = F.normalize(features, dim=1)
+
+    similarity_matrix = torch.matmul(features, features.T)
+
+    pseudo_labels = pseudo_labels.to(device)
+    adjusted_labels = labels * pseudo_labels
+
+    mask = torch.eye(labels.shape[0], dtype=torch.bool).to(device)
+    adjusted_labels = adjusted_labels[~mask].view(labels.shape[0], -1)
+    similarity_matrix = similarity_matrix[~mask].view(similarity_matrix.shape[0], -1)
+
+    positives = similarity_matrix[adjusted_labels.bool()].view(adjusted_labels.shape[0], -1)
+    positive_weights = adjusted_labels[adjusted_labels.bool()].view(adjusted_labels.shape[0], -1)
+
+    negatives = similarity_matrix[~adjusted_labels.bool()].view(adjusted_labels.shape[0], -1)
+
+    positives = positives * positive_weights
+
+    logits = torch.cat([positives, negatives], dim=1)
+    labels = torch.zeros(logits.shape[0], dtype=torch.long).to(device)
+
+    logits = logits / temperature
+    return logits, labels
 def get_params_groups(model):
     regularized = []
     not_regularized = []
