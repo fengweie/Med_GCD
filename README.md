@@ -28,7 +28,7 @@ pip install -r requirements.txt
 **Train the model**:
 
 ```
-bash scripts/run_${DATASET_NAME}.sh
+CUDA_VISIBLE_DEVICES=0 python scripts/train_GCD_MIA.py --dataset_name ${DATASET_NAME}
 ```
 
 
