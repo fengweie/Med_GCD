@@ -263,8 +263,8 @@ def train_dual(student_ce, train_loader, test_loader, args):
 #                 'ce_head': ce_head.state_dict(),}
             torch.save(save_dict_cl, args.model_dir + f'/model_epoch{epoch}.pt')
             args.logger.info("model saved to {}.".format(args.model_dir + f'/model_epoch{epoch}.pt'))
-    torch.save(save_dict_cl, args.model_dir + f'/model_last.pt')
-    args.logger.info("model saved to {}.".format(args.model_dir + f'/model_last.pt'))
+    torch.save(student_ce.state_dict(), args.model_dir + '/model_last.pt')
+    args.logger.info("model saved to {}.".format(args.model_dir + '/model_last.pt'))
     args.logger.info(
         f'Metrics with best model on test set: All: {best_test_acc_all_cl:.1f} Old: {best_test_acc_old_cl:.1f} New: {best_test_acc_new_cl:.1f} ')
     args.logger.info(
