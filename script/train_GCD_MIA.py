@@ -116,7 +116,7 @@ def get_mean_lr(optimizer):
 def train_dual(student_ce, train_loader, test_loader, args):
 
     from cluster_and_log_utils import set_args_mmf
-    set_args_mmf(args, train_loader)  ###将训练集按照类别频率分成many median few三部分，新类和老类
+    set_args_mmf(args, train_loader)  
 
 #     student_ce = nn.Sequential(ce_backbone, ce_head).to(device)
     ####并行计算 ####
@@ -511,8 +511,8 @@ if __name__ == "__main__":
     # SAMPLER
     # Sampler which balances labelled and unlabelled examples in each batch
     # --------------------
-    label_len = len(train_dataset.labelled_dataset)   ####带标签的已知类别的子集
-    unlabelled_len = len(train_dataset.unlabelled_dataset) ###bu带标签的已知类别的子集,bu带标签的wei知类别 
+    label_len = len(train_dataset.labelled_dataset)   
+    unlabelled_len = len(train_dataset.unlabelled_dataset) 
 
     sample_weights = [1 if i < label_len else label_len / unlabelled_len for i in range(len(train_dataset))]
     sample_weights = torch.DoubleTensor(sample_weights)
@@ -523,7 +523,7 @@ if __name__ == "__main__":
     # --------------------
     train_loader = DataLoader(train_dataset, num_workers=args.num_workers, batch_size=args.batch_size, shuffle=False,
                               sampler=sampler, drop_last=True, pin_memory=True)
-    ###bu带标签的已知类别的子集,bu带标签的wei知类别
+
     test_loader_unlabelled = DataLoader(test_dataset, num_workers=args.num_workers,
                                         batch_size=256, shuffle=False, pin_memory=False)
     print("len of train_set:{},len of test_set:{}".format(len(train_dataset),len(test_dataset)))
