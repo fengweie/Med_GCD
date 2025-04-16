@@ -243,7 +243,7 @@ def train_dual(student_ce, train_loader, test_loader, args):
         
         if epoch % args.test_freq == 0:
             
-            args.logger.info('Testing on disjoint test set...')
+            args.logger.info('Testing on unlabelled examples in the training data...')
             
             with torch.no_grad():
                 all_acc_test_cl, old_acc_test_cl, new_acc_test_cl = test(
